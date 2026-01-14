@@ -2,7 +2,7 @@
 
 ### Elevator pitch
 
-A minimalist 5-minute market simulator for the hottest commodity in happy valley. Buy, make, and sell soda, syrup, and straws to game the market and put the other soda shops out of business.
+A minimalist 5-minute market simulator for the hottest commodity in happy valley. Buy, make, and sell soda, syrup, and straws to game the market and put the other soda shops out of business. Think Universal Paperclips, but the universe is Provo, and you're directly competing with other players and the clock.
 
 ### Design
 
