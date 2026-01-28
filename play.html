@@ -19,36 +19,111 @@
     </header>
 
     <main>
-      
-      <div class="timer">
-        TIME REMAINING:
-        <span class="game-timer">2:56</span>
+      <!--Synced from database with websocket-->
+      <div class = "username-display">
+        <h5>Logged in as <span class="username">Player</span></h5>
       </div>
 
+      <!--Connect to websocket to synchronize time. JS ticks it down.-->
+      <div class="timer">
+        TIME REMAINING:
+        <span id="game-timer">2:56</span>
+      </div>
+
+      <!--Updated with JS, synced with websocket-->
       <div class="capital">
         <h4>LIQUID CAPITAL:</h4>
-        <h1 class="game-capital">$200</h1>
+        <h1 id="game-capital">$200.00</h1>
       </div>
       
-      <div class="inventory">
-        <div class="inventory-item">SODA
-          <div class="game-soda">SUPPLY: 10</div>
+      
+      <div class="supplies">
+        <div class="supplies-item">SODA
+          <!--Updated with JS-->
+          <div id="supply-soda">SUPPLY: 10</div>
           <button id="make-soda">MIX</button>
-          <meter id="make-soda-percent" value="0.6">60%</meter>
-          <br>
-          <input type="range" id="price-soda" name="PRICE" min="0.00" max="10.00">PRICE</button>
+          <!--Updated with JS-->
+          <meter id="make-soda-meter" value="0.6">60%</meter>
+          <br />
+          <!--Updated with JS-->
+          PRICE: <span id="price-soda">$3.00</span>
+          <button id="buy-syrup">RAISE</button>
+          <button id="sell-syrup">LOWER</button>
         </div>
-        <div class="inventory-item">SYRUP <span id="price-syrup">($1.00 ⬇️)</span>
-          <div class="game-syrup">SUPPLY: 10</div>
-          <button id="buy-syrup">BUY</button>
-          <button id="sell-syrup">SELL</button>
+        <!--Updated with JS, synced with websocket with a random seed from random.org (3rd party API)-->
+        <div class="supplies-item">SYRUP <span id="price-syrup">(10 | $1.00 ⬇️)</span>
+          <div id="supply-syrup">SUPPLY: 10</div>
+          <button id="buy-syrup">BUY 10</button>
+          <button id="sell-syrup">SELL 10</button>
         </div>
-        <div class="inventory-item">STRAW <span id="price-straw">($0.50 ⬆️)</span>
-          <div class="game-syrup">SUPPLY: 10</div>
-          <button id="buy-straw">BUY</button>
-          <button id="sell-straw">SELL</button>
+        <!--Updated with JS, synced with websocket with a random seed from random.org (3rd party API)-->
+        <div class="supplies-item">STRAW <span id="price-straw">(10 | $0.50 ⬆️)</span>
+          <!--Updated with JS-->
+          <div id="supply-straw">SUPPLY: 15</div>
+          <button id="buy-straw">BUY 10</button>
+          <button id="sell-straw">SELL 10</button>
         </div>
       </div>
+      <h2>STORE</h2>
+      <!--Updated with JS, synced with websocket-->
+        <div class="store">
+        <div class="store-item" id="store-1">
+          <div class="item-title">SODA CADET</div>
+          <div class="item-price">$20.00</div><button id="buy-item-1">BUY</button>
+          <div class="item-description">Slowly mixes sodas for you</div>
+        </div>
+        <div class="store-item" id="store-2">
+          <div class="item-title">SOCIAL MEDIA NOVICE</div>
+          <div class="item-price">$49.99</div><button id="buy-item-2">BUY</button>
+          <div class="item-description">Slightly increases soda demand</div>
+        </div>
+        <div class="store-item" id="store-3">
+          <div class="item-title">SODA ADMIRAL</div>
+          <div class="item-price">$7777.77</div><button id="buy-item-3">BUY</button>
+          <div class="item-description">Mixes sodas at an exemplary rate</div>
+        </div>
+
+        <div class="store-item" id="store-4">
+          <div class="item-title">BIONIC ARM</div>
+          <div class="item-price">$300.00</div><button id="buy-item-1">BUY</button>
+          <div class="item-description">You mix sodas 200% faster</div>
+        </div>
+        <div class="store-item" id="store-5">
+          <div class="item-title">CONTRACT DEAL</div>
+          <div class="item-price">$50.00</div><button id="buy-item-2">BUY</button>
+          <div class="item-description">Straws 20% cheaper</div>
+        </div>
+        <div class="store-item" id="store-6">
+          <div class="item-title">FUNNY CAT</div>
+          <div class="item-price">$100.00</div><button id="buy-item-3">BUY</button>
+          <div class="item-description">Improves marketing effectiveness by 30%</div>
+        </div>
+      </div>
+      <!--Updated with JS, synced with websocket and database-->
+      <h2>INVENTORY</h2>
+        <div class="inventory">
+        <div class="inventory-item">
+          <div class="item-title">TRAINING PROGRAM</div>
+          <div class="item-description">Soda mixers 15% faster</div>
+        </div>
+        <div class="inventory-item">
+          <div class="item-title">INSIDER DEAL</div>
+          <div class="item-description">Syrup 20% cheaper</div>
+        </div>
+      <!--Updated with JS, synced with websocket and database-->
+        <h2>LEADERBOARD</h2>
+        <table class="leaderboard">
+         <tr class="leaderboard-data">
+          <td>PLAYER1</td>
+          <td>(2 wins)</td>
+          <td>$500.00</td>
+         </tr>
+         <tr class="leaderboard-data">
+          <td>PLAYER2</td>
+          <td>(10 wins)</td>
+          <td>$200.00</td>
+         </tr>
+         </table>
 
     <footer>
       <hr />
