@@ -32,3 +32,23 @@ I am going to use the required technologies in the following ways.
 - **WebSocket**
     - Submitting and retrieving leaderboard and market changes.
     - Enforcing 5 minute timer.
+
+## 🚀 AWS deliverable
+
+For this deliverable I did the following. I checked the box `[x]` and added a description for things I completed.
+
+- [x] **Server deployed and accessible with custom domain name** - [My server link](https://sodacap.space).
+
+## 🚀 HTML deliverable
+
+For this deliverable I did the following. I checked the box `[x]` and added a description for things I completed.
+
+- [x] **HTML pages** - Three different pages. `index.html` (Home), `play.html`, and `tutorial.html`
+- [x] **Proper HTML element usage** - I included many tags and classes for easy element access later, and tables and lists where necessary.
+- [x] **Links** - Links between views.
+- [x] **Text** - All pages have written text.
+- [x] **3rd party API placeholder** - random.org seeds used for market simulation
+- [x] **Images** - SodaCap logo on [main page](https://startup.sodacap.space)
+- [x] **Login placeholder** - Placeholder for auth on the login page.
+- [x] **DB data placeholder** - Inventory and leaderboard on play page
+- [x] **WebSocket placeholder** - Play page has placeholders for timer, store, and market prices.
