@@ -26,12 +26,12 @@ I am going to use the required technologies in the following ways.
 - **CSS** - Simple styling to mantain a clean appearance on all screen sizes.
 - **React** - Login, leaderboard and market display, buying and selling functionality.
 - **Service** - Endpoints for:
-    - Generating market prices based on truly random seeds from random.org
-    - Registering, login, and logout
+  - Generating market prices based on truly random seeds from random.org
+  - Registering, login, and logout
 - **DB** - Store users and wins.
 - **WebSocket**
-    - Submitting and retrieving leaderboard and market changes.
-    - Enforcing 5 minute timer.
+  - Submitting and retrieving leaderboard and market changes.
+  - Enforcing 5 minute timer.
 
 ## 🚀 AWS deliverable
 
@@ -52,3 +52,14 @@ For this deliverable I did the following. I checked the box `[x]` and added a de
 - [x] **Login placeholder** - Placeholder for auth on the login page.
 - [x] **DB data placeholder** - Inventory and leaderboard on play page
 - [x] **WebSocket placeholder** - Play page has placeholders for timer, store, and market prices.
+
+## 🚀 CSS deliverable
+
+For this deliverable I did the following. I checked the box `[x]` and added a description for things I completed.
+
+- [x] **Header, footer, and main content body** - 'main.css' is used for tutorial and home, and 'play.css' is the very different styling on the game page.
+- [x] **Navigation elements** - Just like in the HTML.
+- [x] **Responsive to window resizing** - a LOT of flexbox. and one good media rule.
+- [x] **Application elements** - Flexing and boxing
+- [x] **Application text content** - I used jetbrains mono for my mockup and it grew on me
+- [x] **Application images** - Remade the logo in jetbrains mono and I am quite fond of it
