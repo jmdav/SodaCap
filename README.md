@@ -1,4 +1,4 @@
-# SodaSim
+# SodaCap
 
 ### Elevator pitch
 
