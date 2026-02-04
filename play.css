@@ -138,6 +138,7 @@ body {
   border: 1px solid gray;
   border-radius: 20px;
   background-color: white;
+  transition: 0.1s;
 }
 
 .supplies {
@@ -172,9 +173,17 @@ button:hover {
   border-radius: 20px;
   width: 250px;
   background-color: white;
+  transition: 0.1s;
+}
+
+.store-item:hover,
+.supplies-item:hover,
+.inventory-item:hover {
+  transform: translateY(2px);
 }
 
 .inventory-item {
+  transition: 0.1s;
   padding: 20px;
   margin: 5px;
   border: 1px solid gray;

@@ -7,6 +7,13 @@
     <link rel="icon" href="favicon.ico" />
     <link rel="stylesheet" href="play.css" />
     <link href="https://fonts.googleapis.com" rel="stylesheet" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65"
+      crossorigin="anonymous"
+    />
     <script>
       setTimeout(() => {
         document.querySelector(".preload").classList.toggle("preload");
@@ -53,29 +60,29 @@
               SODA
               <!--Updated with JS-->
               <div id="supply-soda">SUPPLY: 10</div>
-              <button id="make-soda">MIX</button>
+              <button id="make-soda" class="btn">MIX</button>
               <!--Updated with JS-->
               <meter id="make-soda-meter" value="0.6">60%</meter>
               <br />
               <!--Updated with JS-->
               PRICE: <span id="price-soda">$3.00</span>
-              <button id="buy-syrup">RAISE</button>
-              <button id="sell-syrup">LOWER</button>
+              <button id="buy-syrup" class="btn">RAISE</button>
+              <button id="sell-syrup" class="btn">LOWER</button>
             </div>
             <!--Updated with JS, synced with websocket with a random seed from random.org (3rd party API)-->
             <div class="supplies-item">
               SYRUP <span id="price-syrup">(10 | $1.00 ⬇️)</span>
               <div id="supply-syrup">SUPPLY: 10</div>
-              <button id="buy-syrup">BUY 10</button>
-              <button id="sell-syrup">SELL 10</button>
+              <button id="buy-syrup class="btn"">BUY 10</button>
+              <button id="sell-syrup" class="btn">SELL 10</button>
             </div>
             <!--Updated with JS, synced with websocket with a random seed from random.org (3rd party API)-->
             <div class="supplies-item">
               STRAW <span id="price-straw">(10 | $0.50 ⬆️)</span>
               <!--Updated with JS-->
               <div id="supply-straw">SUPPLY: 15</div>
-              <button id="buy-straw">BUY 10</button>
-              <button id="sell-straw">SELL 10</button>
+              <button id="buy-straw" class="btn">BUY 10</button>
+              <button id="sell-straw" class="btn">SELL 10</button>
             </div>
           </div>
           <h2>STORE</h2>
@@ -84,19 +91,19 @@
             <div class="store-item" id="store-1">
               <div class="item-title">SODA CADET</div>
               <div class="item-price">$20.00</div>
-              <button id="buy-item-1">BUY</button>
+              <button id="buy-item-1" class="btn">BUY</button>
               <div class="item-description">Slowly mixes sodas for you</div>
             </div>
             <div class="store-item" id="store-2">
               <div class="item-title">SOCIAL MEDIA NOVICE</div>
               <div class="item-price">$49.99</div>
-              <button id="buy-item-2">BUY</button>
+              <button id="buy-item-2" class="btn">BUY</button>
               <div class="item-description">Slightly increases soda demand</div>
             </div>
             <div class="store-item" id="store-3">
               <div class="item-title">SODA ADMIRAL</div>
               <div class="item-price">$7777.77</div>
-              <button id="buy-item-3">BUY</button>
+              <button id="buy-item-3" class="btn">BUY</button>
               <div class="item-description">
                 Mixes sodas at an exemplary rate
               </div>
@@ -105,19 +112,19 @@
             <div class="store-item" id="store-4">
               <div class="item-title">BIONIC ARM</div>
               <div class="item-price">$300.00</div>
-              <button id="buy-item-1">BUY</button>
+              <button id="buy-item-1" class="btn">BUY</button>
               <div class="item-description">You mix sodas 200% faster</div>
             </div>
             <div class="store-item" id="store-5">
               <div class="item-title">CONTRACT DEAL</div>
               <div class="item-price">$50.00</div>
-              <button id="buy-item-2">BUY</button>
+              <button id="buy-item-2" class="btn">BUY</button>
               <div class="item-description">Straws 20% cheaper</div>
             </div>
             <div class="store-item" id="store-6">
               <div class="item-title">FUNNY CAT</div>
               <div class="item-price">$100.00</div>
-              <button id="buy-item-3">BUY</button>
+              <button id="buy-item-3" class="btn">BUY</button>
               <div class="item-description">
                 Improves marketing effectiveness by 30%
               </div>
