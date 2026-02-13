@@ -12,7 +12,7 @@ html {
   position: fixed;
   width: 100vw;
   height: 100vh;
-  z-index: -10;
+  z-index: 0;
 }
 
 .logo {
@@ -38,6 +38,8 @@ html {
   flex-direction: column;
   margin: 0;
   padding: 0px;
+  position: relative;
+  z-index: 1;
 }
 
 p,

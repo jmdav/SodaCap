@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import Particles, { initParticlesEngine } from "@tsparticles/react";
-import { loadSlim } from "@tsparticles/slim";
+import { loadAll } from "@tsparticles/all";
 import "./app.css";
 
 export default function App() {
@@ -8,7 +8,7 @@ export default function App() {
 
   useEffect(() => {
     initParticlesEngine(async (engine) => {
-      await loadSlim(engine);
+      await loadAll(engine);
     }).then(() => {
       setInit(true);
     });
@@ -16,42 +16,60 @@ export default function App() {
 
   const options = useMemo(
     () => ({
+      fullScreen: {
+        enable: true,
+        zIndex: -1,
+      },
       particles: {
+        stroke: {
+          width: 4,
+          color: "#000000",
+          opacity: 0.1,
+        },
         number: {
-          value: 48,
+          value: 60,
           density: {
             enable: true,
-            value_area: 800,
+            area: 900,
           },
         },
         color: {
-          value: "#acacac",
+          value: "#ffffff",
         },
         shape: {
           type: "circle",
-          stroke: {
-            width: 4,
-            color: "#ededed",
-          },
+          fill: false,
         },
+
         opacity: {
-          value: 0.5,
+          value: 1,
         },
         size: {
-          value: 15.99,
+          value: {
+            min: 5,
+            max: 50,
+          },
           random: true,
         },
         move: {
+          gravity: -0.3,
           enable: true,
-          speed: 6,
-          direction: "top",
+          speed: {
+            min: 3,
+            max: 10,
+          },
+          angle: 50,
           random: true,
           straight: false,
-          out_mode: "out",
+          direction: "top",
+          outModes: {
+            default: "out",
+          },
         },
       },
+
       interactivity: {
-        detect_on: "canvas",
+        detect_on: "window",
         events: {
           onhover: {
             enable: false,
