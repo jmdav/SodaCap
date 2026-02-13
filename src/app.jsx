@@ -1,7 +1,8 @@
 import React, { useEffect, useMemo, useState } from "react";
 import Particles, { initParticlesEngine } from "@tsparticles/react";
 import { loadAll } from "@tsparticles/all";
-import "./app.css";
+import { useLocation } from 'react-router-dom';
+import styles from "./app.module.css";
 
 
 import { BrowserRouter, NavLink, Route, Routes } from 'react-router-dom';
@@ -11,6 +12,7 @@ import { Tutorial } from './tutorial/tutorial';
 
 export default function App() {
   const [init, setInit] = useState(false);
+
 
   useEffect(() => {
     initParticlesEngine(async (engine) => {
@@ -95,21 +97,7 @@ export default function App() {
       <div className="body" id="particles-js">
         {init && <Particles id="tsparticles" options={options} />}
         <div className="content">
-          <header>
-            <img
-              className="logo"
-              src="/sodacap.png"
-              width="400px"
-              alt="SodaCap"
-            />
-            <nav>
-              <menu className="main-nav">
-                <NavLink className="nav-link" to="">Home</NavLink>
-                <NavLink className="nav-link" to="play">Play</NavLink>
-                <NavLink className="nav-link" to="tutorial">About</NavLink>
-              </menu>
-            </nav>
-          </header>
+          <Header />
           <Routes>
             <Route path='/' element={<Login />} exact />
             <Route path='/play' element={<Play />} />
@@ -117,10 +105,9 @@ export default function App() {
             <Route path='*' element={<NotFound />} />
           </Routes>
         </div>
-        <footer>
+        <footer className="footer">
           <span className="text-reset">Game by James Davies</span>
           <a href="https://github.com/jmdav/soda">GitHub</a>
-          <a href="https://vincentgarreau.com/particles.js/">particles-js</a>
         </footer>
 
       </div>
@@ -129,6 +116,34 @@ export default function App() {
 
   function NotFound() {
     return <main className="container-fluid bg-secondary text-center">404: Return to sender. Address unknown.</main>;
+  }
+
+  function Header() {
+    const location = useLocation();
+    var headerClass;
+    if (location.pathname === '/' || location.pathname === "/tutorial") {
+      headerClass = styles.headerMain;
+    }
+    if (location.pathname === '/play') {
+      headerClass = styles.headerPlay;
+    }
+    return (
+      <header className={headerClass}>
+        <img
+          className={styles.logo}
+          src="/sodacap.png"
+          width="400px"
+          alt="SodaCap"
+        />
+        <nav className={styles.nav}>
+          <menu className={styles.mainNav}>
+            <NavLink className={styles.navLink} to="">Home</NavLink>
+            <NavLink className={styles.navLink} to="play">Play</NavLink>
+            <NavLink className={styles.navLink} to="tutorial">About</NavLink>
+          </menu>
+        </nav>
+      </header>
+    );
   }
 
 }

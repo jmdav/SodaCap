@@ -3,7 +3,7 @@ import styles from "../main.module.css";
 
 export function Login() {
   return (
-    <main className={styles.container}>
+    <main className={styles.main}>
       <form method="get" action="play.html">
         <div>
           <input type="text" placeholder="username" />
