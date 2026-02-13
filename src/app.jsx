@@ -3,6 +3,12 @@ import Particles, { initParticlesEngine } from "@tsparticles/react";
 import { loadAll } from "@tsparticles/all";
 import "./app.css";
 
+
+import { BrowserRouter, NavLink, Route, Routes } from 'react-router-dom';
+import { Login } from './login/login';
+import { Play } from './play/play';
+import { Tutorial } from './tutorial/tutorial';
+
 export default function App() {
   const [init, setInit] = useState(false);
 
@@ -85,49 +91,44 @@ export default function App() {
   );
 
   return (
-    <div className="body preload" id="particles-js">
-      {init && <Particles id="tsparticles" options={options} />}
-      <div className="content">
-        <header>
-          <img
-            className="logo"
-            src="/sodacap.png"
-            width="400px"
-            alt="SodaCap"
-          />
-          <nav>
-            <menu className="main-nav">
-              <a href="index.html">Home</a>
-              <a href="play.html">Play</a>
-              <a href="tutorial.html">About</a>
-            </menu>
-          </nav>
-        </header>
+    <BrowserRouter>
+      <div className="body" id="particles-js">
+        {init && <Particles id="tsparticles" options={options} />}
+        <div className="content">
+          <header>
+            <img
+              className="logo"
+              src="/sodacap.png"
+              width="400px"
+              alt="SodaCap"
+            />
+            <nav>
+              <menu className="main-nav">
+                <NavLink className="nav-link" to="">Home</NavLink>
+                <NavLink className="nav-link" to="play">Play</NavLink>
+                <NavLink className="nav-link" to="tutorial">About</NavLink>
+              </menu>
+            </nav>
+          </header>
+          <Routes>
+            <Route path='/' element={<Login />} exact />
+            <Route path='/play' element={<Play />} />
+            <Route path='/tutorial' element={<Tutorial />} />
+            <Route path='*' element={<NotFound />} />
+          </Routes>
+        </div>
+        <footer>
+          <span className="text-reset">Game by James Davies</span>
+          <a href="https://github.com/jmdav/soda">GitHub</a>
+          <a href="https://vincentgarreau.com/particles.js/">particles-js</a>
+        </footer>
 
-        <main>
-          <form method="get" action="play.html">
-            <div>
-              <input type="text" placeholder="username" />
-            </div>
-            <div>
-              <input type="password" placeholder="password" />
-            </div>
-            <div className="login-buttons">
-              <button type="submit" className="btn">
-                Login
-              </button>
-              <button type="submit" className="btn">
-                Create
-              </button>
-            </div>
-          </form>
-        </main>
       </div>
-      <footer>
-        <span className="text-reset">Game by James Davies</span>
-        <a href="https://github.com/jmdav/soda">GitHub</a>
-        <a href="https://vincentgarreau.com/particles.js/">particles-js</a>
-      </footer>
-    </div>
+    </BrowserRouter>
   );
+
+  function NotFound() {
+    return <main className="container-fluid bg-secondary text-center">404: Return to sender. Address unknown.</main>;
+  }
+
 }
