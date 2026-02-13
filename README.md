@@ -63,3 +63,11 @@ For this deliverable I did the following. I checked the box `[x]` and added a de
 - [x] **Application elements** - Flexing and boxing
 - [x] **Application text content** - I used jetbrains mono for my mockup and it grew on me
 - [x] **Application images** - Remade the logo in jetbrains mono and I am quite fond of it
+
+## 🚀 React part 1: Routing deliverable
+
+For this deliverable I did the following. I checked the box `[x]` and added a description for things I completed.
+
+- [x] **Bundled using Vite** - No issues here
+- [x] **Components** - The particles were absolutely horrible. Most of my time on this assignment was trying to get these to work, and the rest of the time was spent trying to get CSS styling to change depending on the page.
+- [x] **Router** - Easy to creating the component routing.
