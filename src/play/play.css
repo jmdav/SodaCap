@@ -103,7 +103,7 @@ footer {
   z-index: 10;
 }
 
-body {
+.body {
   display: flex;
   justify-content: center;
   margin: 0px;
