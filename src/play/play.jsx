@@ -1,46 +1,55 @@
-import React from 'react';
+import React, { useState } from "react";
 import styles from "./play.module.css";
 
-import { TopBar } from './TopBar';
-import { CapitalDisplay } from './CapitalDisplay';
-import { SuppliesPanel } from './supplies/SuppliesBar';
-import { StorePanel } from './store/StoreBar';
-import { InventoryPanel } from './store/InventoryBar';
-import { Leaderboard } from './Leaderboard';
+import { TopBar } from "./TopBar";
+import { CapitalDisplay } from "./CapitalDisplay";
+import { SuppliesBar } from "./supplies/SuppliesBar";
+import { StoreBar } from "./store/StoreBar";
+import { InventoryBar } from "./store/InventoryBar";
+import { Leaderboard } from "./Leaderboard";
 
-export function Play() {
+export function Play({ username }) {
+  //Game variables
+  const [gameTime, setGameTime] = useState(600);
+  const [capital, setCapital] = useState(20.0);
+  const [supplies, setSupplies] = useState({
+    soda: 0,
+    syrup: 10,
+    straw: 10,
+  });
+  const [sellPrices, setSellPrices] = useState({
+    soda: 4.0,
+    syrup: -1,
+    straw: -1,
+  });
+  const [buyPrices, setBuyPrices] = useState({
+    soda: 3.0,
+    syrup: 1.0,
+    straw: 0.5,
+  });
+  const [stats, setStats] = useState({
+    sellRate: 1.0,
+    mixTime: 0.5,
+    autoMixTime: -1,
+  });
+  const [upgrades, setUpgrades] = useState([]);
+
   return (
     <div className={styles.container}>
-      <TopBar />
+      <TopBar gameTime={gameTime} username={username} />
       <main className={styles.main}>
-        <CapitalDisplay />
+        <CapitalDisplay capital={capital} />
         <div className={styles.lowerWrapper}>
-          <SuppliesPanel />
-          <StorePanel />
-          <h2 className={styles.h2}>INVENTORY</h2>
-          <div className={styles.inventory}>
-            <div className={styles.inventoryItem}>
-              <div className={styles.itemTitle}>TRAINING PROGRAM</div>
-              <div className={styles.itemDescription}>Soda mixers 15% faster</div>
-            </div>
-            <div className={styles.inventoryItem}>
-              <div className={styles.itemTitle}>INSIDER DEAL</div>
-              <div className={styles.itemDescription}>Syrup 20% cheaper</div>
-            </div>
-          </div>
-          <h2 className={styles.h2}>LEADERBOARD</h2>
-          <table className={styles.leaderboard}>
-            <tr className={styles.leaderboardData}>
-              <td>PLAYER1</td>
-              <td>(2 wins)</td>
-              <td>$500.00</td>
-            </tr>
-            <tr className={styles.leaderboardData}>
-              <td>PLAYER2</td>
-              <td>(10 wins)</td>
-              <td>$200.00</td>
-            </tr>
-          </table>
+          <SuppliesBar
+            supplies={supplies}
+            sellPrices={sellPrices}
+            buyPrices={buyPrices}
+            stats={stats}
+            capital={capital}
+          />
+          <StoreBar capital={capital} />
+          <InventoryBar upgrades={upgrades} />
+          <Leaderboard capital={capital} />
         </div>
       </main>
     </div>

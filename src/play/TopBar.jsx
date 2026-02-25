@@ -1,10 +1,19 @@
-<div className={styles.topBar}>
-    <div className={styles.usernameDisplay}>
-        <h5>Logged in as <span className={styles.username}>Player</span></h5>
-    </div>
+import React from "react";
+import styles from "./play.module.css";
 
-    <div className={styles.timer}>
+export function TopBar({ username, gameTime }) {
+  return (
+    <div className={styles.topBar}>
+      <div className={styles.usernameDisplay}>
+        <h5>
+          Logged in as <span className={styles.username}>{username}</span>
+        </h5>
+      </div>
+
+      <div className={styles.timer}>
         TIME REMAINING:
-        <span id="game-timer"> 2:56</span>
+        <span id="game-timer">{gameTime}</span>
+      </div>
     </div>
-</div>
+  );
+}

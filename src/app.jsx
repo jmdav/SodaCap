@@ -1,18 +1,17 @@
 import React, { useEffect, useMemo, useState } from "react";
 import Particles, { initParticlesEngine } from "@tsparticles/react";
 import { loadAll } from "@tsparticles/all";
-import { useLocation } from 'react-router-dom';
+import { useLocation } from "react-router-dom";
 import styles from "./app.module.css";
 
-
-import { BrowserRouter, NavLink, Route, Routes } from 'react-router-dom';
-import { Login } from './login/login';
-import { Play } from './play/play';
-import { Tutorial } from './tutorial/tutorial';
+import { BrowserRouter, NavLink, Route, Routes } from "react-router-dom";
+import { Login } from "./login/login";
+import { Play } from "./play/play";
+import { Tutorial } from "./tutorial/tutorial";
 
 export default function App() {
   const [init, setInit] = useState(false);
-
+  const [username, setUsername] = useState("James");
 
   useEffect(() => {
     initParticlesEngine(async (engine) => {
@@ -99,32 +98,35 @@ export default function App() {
         <div className="content">
           <Header />
           <Routes>
-            <Route path='/' element={<Login />} exact />
-            <Route path='/play' element={<Play />} />
-            <Route path='/tutorial' element={<Tutorial />} />
-            <Route path='*' element={<NotFound />} />
+            <Route path="/" element={<Login />} exact />
+            <Route path="/play" element={<Play username={username} />} />
+            <Route path="/tutorial" element={<Tutorial />} />
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </div>
         <footer className="footer">
           <span className="text-reset">Game by James Davies</span>
           <a href="https://github.com/jmdav/soda">GitHub</a>
         </footer>
-
       </div>
     </BrowserRouter>
   );
 
   function NotFound() {
-    return <main className="container-fluid bg-secondary text-center">404: Return to sender. Address unknown.</main>;
+    return (
+      <main className="container-fluid bg-secondary text-center">
+        404: Return to sender. Address unknown.
+      </main>
+    );
   }
 
   function Header() {
     const location = useLocation();
     var headerClass;
-    if (location.pathname === '/' || location.pathname === "/tutorial") {
+    if (location.pathname === "/" || location.pathname === "/tutorial") {
       headerClass = styles.headerMain;
     }
-    if (location.pathname === '/play') {
+    if (location.pathname === "/play") {
       headerClass = styles.headerPlay;
     }
     return (
@@ -137,13 +139,18 @@ export default function App() {
         />
         <nav className={styles.nav}>
           <menu className={styles.mainNav}>
-            <NavLink className={styles.navLink} to="">Home</NavLink>
-            <NavLink className={styles.navLink} to="play">Play</NavLink>
-            <NavLink className={styles.navLink} to="tutorial">About</NavLink>
+            <NavLink className={styles.navLink} to="">
+              Home
+            </NavLink>
+            <NavLink className={styles.navLink} to="play">
+              Play
+            </NavLink>
+            <NavLink className={styles.navLink} to="tutorial">
+              About
+            </NavLink>
           </menu>
         </nav>
       </header>
     );
   }
-
 }
