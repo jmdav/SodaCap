@@ -6,7 +6,7 @@ export function CapitalDisplay({ capital }) {
     <div className={styles.capitalWrapper}>
       <div className={styles.capital}>
         <p>LIQUID CAPITAL:</p>
-        <p className={styles.gameCapital}>${capital}</p>
+        <p className={styles.gameCapital}>${capital.toFixed(2)}</p>
       </div>
     </div>
   );
