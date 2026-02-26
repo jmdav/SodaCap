@@ -46,7 +46,7 @@ export function SuppliesBar({
       if (intervalId) clearInterval(intervalId);
     };
 
-  }, [isMixing, updateSupplies, stats?.mixTime]);
+  }, [isMixing, stats?.mixTime]);
 
   const handleMixClick = () => {
     if (!isMixing && supplies.straw > 0 && supplies.syrup > 0) {
@@ -73,7 +73,23 @@ export function SuppliesBar({
   return (
     <div className={styles.supplies}>
       <div className={styles.suppliesItem}>
-        SODA
+        <h3>SODA</h3>
+        <h4>PRICE: ${sellPrices.soda.toFixed(2)}</h4>
+        <button
+          id="raise-soda-price"
+          className={styles.btn}
+          onClick={() => changeSodaPrice(0.25)}
+        >
+          ↑
+        </button>
+        <button
+          id="lower-soda-price"
+          className={styles.btn}
+          disabled={sellPrices.soda <= 0.25}
+          onClick={() => changeSodaPrice(-0.25)}
+        >
+          ↓
+        </button>
         <div id="supply-soda">SUPPLY: {supplies.soda}</div>
 
         <button
@@ -86,27 +102,13 @@ export function SuppliesBar({
 
         <meter id="make-soda-meter" value={sodaMix} max="100" />
         <br />
-        PRICE: <span id="price-soda">${sellPrices.soda.toFixed(2)}</span>
-        <button
-          id="raise-soda-price"
-          className={styles.btn}
-          onClick={() => changeSodaPrice(0.25)}
-        >
-          RAISE
-        </button>
-        <button
-          id="lower-soda-price"
-          className={styles.btn}
-          disabled={sellPrices.soda <= 0.25}
-          onClick={() => changeSodaPrice(-0.25)}
-        >
-          LOWER
-        </button>
+
       </div>
 
       <div className={styles.suppliesItem}>
-        SYRUP <span id="price-syrup">(10 | ${buyPrices.syrup.toFixed(2)})</span>
-
+        <h3>SYRUP</h3>
+        <h4 id="price-syrup">(B: ${(buyPrices.syrup * 10).toFixed(2)} | S: ${(sellPrices.syrup * 10).toFixed(2)})</h4>
+        <br />
         <div id="supply-syrup">SUPPLY: {supplies.syrup}</div>
 
         <button
@@ -126,8 +128,9 @@ export function SuppliesBar({
       </div>
 
       <div className={styles.suppliesItem}>
-        STRAW <span id="price-straw">(10 | ${buyPrices.straw.toFixed(2)})</span>
-
+        <h3>STRAW</h3>
+        <h4 id="price-straw">(B: ${(buyPrices.straw * 10).toFixed(2)} | S: ${(sellPrices.straw * 10).toFixed(2)})</h4>
+        <br />
         <div id="supply-straw">SUPPLY: {supplies.straw}</div>
 
         <button
