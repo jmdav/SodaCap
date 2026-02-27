@@ -100,7 +100,7 @@ a:hover {
   padding: 20px;
   margin: 5px;
   border: 1px solid gray;
-  border-radius: 20px;
+  border-radius: 10px;
   background-color: white;
   transition: 0.1s;
 }
@@ -114,8 +114,8 @@ a:hover {
 .btn {
   background-color: white;
   border: 1px solid gray;
-  padding: 5px 14px;
-  border-radius: 15px;
+  padding: 7px 14px;
+  border-radius: 10px;
   color: black;
   cursor: pointer;
   transition: 0.1s;
@@ -142,7 +142,7 @@ a:hover {
   padding: 20px;
   margin: 5px;
   border: 1px solid gray;
-  border-radius: 20px;
+  border-radius: 1cqmax;
   width: 250px;
   background-color: white;
   transition: 0.1s;
@@ -159,7 +159,7 @@ a:hover {
   padding: 20px;
   margin: 5px;
   border: 1px solid gray;
-  border-radius: 20px;
+  border-radius: 10px;
   background-color: white;
 }
 

@@ -14,7 +14,7 @@ export function Play({ username }) {
   const [capital, setCapital] = useState(20.0);
 
   const [economy, setEconomy] = useState({
-    demand: 10,
+    demand: 100,
     changeRate: 0.05,
     volatility: 0.2,
     sellRatio: 0.8,
@@ -22,8 +22,8 @@ export function Play({ username }) {
 
   const [supplies, setSupplies] = useState({
     soda: 0,
-    syrup: 10,
-    straw: 10,
+    syrup: 1000,
+    straw: 1000,
   });
 
   const updateSupplies = (type, amount) => {
@@ -102,45 +102,76 @@ export function Play({ username }) {
   const [stats, setStats] = useState({
     sellRate: economy.demand / sellPrices.soda,
     mixTime: 1,
-    autoMixTime: -1,
+    autoMixRate: 100.33,
   });
   const [upgrades, setUpgrades] = useState([]);
 
 
+  const partialSodas = React.useRef(0);
+  const tickCount = React.useRef(0);
+
   useEffect(() => {
+    const gameLoop = setInterval(() => {
 
-    // Assign the interval ID directly to sellTimer
-    const sellTimer = setInterval(() => {
+      tickCount.current++;
 
-      const publicDemand = economy.demand / sellPrices.soda;
-      const sellChance = publicDemand / 100;
-
-      rerollPrices("syrup");
-      rerollPrices("straw");
-
-      if (Math.random() < sellChance) {
-        let batchSize = Math.floor(0.7 * Math.pow(publicDemand, 1.15));
-        if (batchSize < 1) batchSize = 1;
-
-        setSupplies((prevSupplies) => {
-          if (prevSupplies.soda > 0) {
-            const actualSales = Math.min(prevSupplies.soda, batchSize);
-            setCapital((prevCapital) => prevCapital + (actualSales * sellPrices.soda));
-            return {
-              ...prevSupplies,
-              soda: prevSupplies.soda - actualSales,
-            };
-          }
-          return prevSupplies;
-        });
+      // Only reroll prices every other tick
+      if (tickCount.current % 2 === 0) {
+        rerollPrices("syrup");
+        rerollPrices("straw");
       }
+
+      setSupplies((prev) => {
+        let currentSodas = prev.soda;
+        let currentSyrup = prev.syrup;
+        let currentStraw = prev.straw;
+
+        partialSodas.current += (stats.autoMixRate / 10);
+        const finishedSodas = Math.floor(partialSodas.current);
+        partialSodas.current -= finishedSodas;
+
+        if (finishedSodas > 0) {
+          const actualSodas = Math.min(finishedSodas, currentSyrup, currentStraw);
+
+          if (actualSodas > 0) {
+            currentSodas += actualSodas;
+            currentSyrup -= actualSodas;
+            currentStraw -= actualSodas;
+
+          }
+        }
+
+        const publicDemand = economy.demand / sellPrices.soda;
+        const sellChance = publicDemand / 100;
+        let capitalEarnedThisTick = 0;
+
+        if (Math.random() < sellChance && currentSodas > 0) {
+          let batchSize = Math.max(1, Math.floor(0.7 * Math.pow(publicDemand, 1.15)));
+
+          const actualSales = Math.min(currentSodas, batchSize);
+
+          currentSodas -= actualSales;
+          capitalEarnedThisTick = actualSales * sellPrices.soda;
+        }
+
+        if (capitalEarnedThisTick > 0) {
+          setCapital((prevCap) => prevCap + capitalEarnedThisTick);
+        }
+
+        return {
+          ...prev,
+          soda: currentSodas,
+          syrup: currentSyrup,
+          straw: currentStraw,
+        };
+      });
 
     }, 100);
 
-    // Clear the exact same variable!
-    return () => clearInterval(sellTimer);
+    return () => clearInterval(gameLoop);
 
-  }, [economy.demand, sellPrices.soda]);
+    // Note: Make sure stats.autoMixRate is in your dependency array if it changes dynamically!
+  }, [economy.demand, sellPrices.soda, stats.autoMixRate]);
 
   return (
     <div className={styles.container}>
