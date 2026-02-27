@@ -12,7 +12,7 @@ export function TopBar({ username, gameTime }) {
 
       <div className={styles.timer}>
         TIME REMAINING:
-        <span id="game-timer">{gameTime}</span>
+        <span id="game-timer"> {gameTime}</span>
       </div>
     </div>
   );

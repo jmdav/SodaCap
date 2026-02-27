@@ -98,7 +98,7 @@ export default function App() {
         <div className="content">
           <Header />
           <Routes>
-            <Route path="/" element={<Login />} exact />
+            <Route path="/" element={<Login startGame={startGame} />} />
             <Route path="/play" element={<Play username={username} />} />
             <Route path="/tutorial" element={<Tutorial />} />
             <Route path="*" element={<NotFound />} />
@@ -118,6 +118,11 @@ export default function App() {
         404: Return to sender. Address unknown.
       </main>
     );
+  }
+
+  function startGame(nextUsername) {
+    const trimmedUsername = nextUsername?.trim();
+    setUsername(trimmedUsername || "Player");
   }
 
   function Header() {
@@ -141,9 +146,6 @@ export default function App() {
           <menu className={styles.mainNav}>
             <NavLink className={styles.navLink} to="">
               Home
-            </NavLink>
-            <NavLink className={styles.navLink} to="play">
-              Play
             </NavLink>
             <NavLink className={styles.navLink} to="tutorial">
               About

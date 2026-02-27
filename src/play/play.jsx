@@ -7,23 +7,24 @@ import { SuppliesBar } from "./supplies/SuppliesBar";
 import { StoreBar } from "./store/StoreBar";
 import { InventoryBar } from "./store/InventoryBar";
 import { Leaderboard } from "./Leaderboard";
+import { upgrades } from "./upgrades.js";
 
 export function Play({ username }) {
   //Game variables
   const [gameTime, setGameTime] = useState(600);
-  const [capital, setCapital] = useState(20.0);
-
+  const [capital, setCapital] = useState(50.0);
+  const [maxCapital, setMaxCapital] = useState(50.0);
   const [economy, setEconomy] = useState({
-    demand: 100,
-    changeRate: 0.05,
-    volatility: 0.2,
+    demand: 45,
+    changeRate: 0.1,
+    volatility: 0.3,
     sellRatio: 0.8,
   })
 
   const [supplies, setSupplies] = useState({
     soda: 0,
-    syrup: 1000,
-    straw: 1000,
+    syrup: 10,
+    straw: 10,
   });
 
   const updateSupplies = (type, amount) => {
@@ -53,19 +54,19 @@ export function Play({ username }) {
     return (Math.random() * (max - min)) + min;
   }
 
-  const rerollPrices = (type) => {
+  const rerollPrices = React.useCallback((type) => {
+    const currentEconomy = economyRef.current; // Use the ref!
 
-    if (Math.random() < economy.changeRate) {
+    if (Math.random() < currentEconomy.changeRate) {
       let multiplier = randomInterval(
-        1 - economy.volatility,
-        1 + economy.volatility
+        1 - currentEconomy.volatility,
+        1 + currentEconomy.volatility
       );
 
-      //crazy market change
-      if (Math.random() < economy.changeRate) {
+      if (Math.random() < currentEconomy.changeRate) {
         multiplier = randomInterval(
-          economy.volatility / 2,
-          2 + economy.volatility
+          currentEconomy.volatility / 2,
+          2 + currentEconomy.volatility
         );
       }
 
@@ -74,7 +75,7 @@ export function Play({ username }) {
 
         setSellPrices((prevSell) => ({
           ...prevSell,
-          [type]: newBuyPrice * (economy.sellRatio * randomInterval(0.8, 1.2)),
+          [type]: newBuyPrice * (currentEconomy.sellRatio * randomInterval(0.8, 1.2)),
         }));
 
         return {
@@ -83,7 +84,7 @@ export function Play({ username }) {
         };
       });
     }
-  };
+  }, []);
 
   const updateCapital = (amount) => {
     setCapital((prev) => prev + amount);
@@ -91,29 +92,72 @@ export function Play({ username }) {
 
   const [sellPrices, setSellPrices] = useState({
     soda: 3.0,
-    syrup: 0.9,
+    syrup: 0.4,
     straw: 0.4,
   });
   const [buyPrices, setBuyPrices] = useState({
     soda: 3.0,
-    syrup: 2.0,
-    straw: 1.0,
+    syrup: 0.5,
+    straw: 0.5,
   });
   const [stats, setStats] = useState({
     sellRate: economy.demand / sellPrices.soda,
     mixTime: 1,
-    autoMixRate: 100.33,
+    mixAmount: 1,
+    autoMixRate: 0,
+    syrupMakeRate: 0,
+    strawMakeRate: 0,
   });
-  const [upgrades, setUpgrades] = useState([]);
 
+  const [upgradesOwned, setUpgradesOwned] = useState(() =>
+    Object.keys(upgrades).reduce((acc, upgradeId) => {
+      acc[upgradeId] = 0;
+      return acc;
+    }, {})
+  );
 
   const partialSodas = React.useRef(0);
   const tickCount = React.useRef(0);
+  const economyRef = React.useRef(economy);
+  const capitalRef = React.useRef(capital);
+  const maxCapitalRef = React.useRef(maxCapital);
+  const sellPricesRef = React.useRef(sellPrices);
 
   useEffect(() => {
+    economyRef.current = economy;
+    capitalRef.current = capital;
+    maxCapitalRef.current = maxCapital;
+    sellPricesRef.current = sellPrices;
+  }, [economy, capital, maxCapital, sellPrices]);
+
+  const buyUpgrade = (upgradeId) => {
+    const upgradeData = upgrades[upgradeId];
+    const currentCount = upgradesOwned[upgradeId];
+    const currentCost = upgradeData.baseCost * Math.pow(upgradeData.costMultiplier || 1.15, currentCount);
+    if (capital >= currentCost) {
+      setCapital((prev) => prev - currentCost);
+      setUpgradesOwned((prev) => ({
+        ...prev,
+        [upgradeId]: currentCount + 1
+      }))
+      upgradeData.onPurchase({
+        setEconomy,
+        setStats
+      });
+    }
+
+  }
+
+  useEffect(() => {
+
     const gameLoop = setInterval(() => {
 
       tickCount.current++;
+      setGameTime((prev) => prev - 0.1);
+
+      if (capitalRef.current > maxCapitalRef.current) {
+        setMaxCapital(capitalRef.current);
+      }
 
       // Only reroll prices every other tick
       if (tickCount.current % 2 === 0) {
@@ -141,17 +185,17 @@ export function Play({ username }) {
           }
         }
 
-        const publicDemand = economy.demand / sellPrices.soda;
+        const publicDemand = economyRef.current.demand / sellPricesRef.current.soda;
         const sellChance = publicDemand / 100;
         let capitalEarnedThisTick = 0;
 
         if (Math.random() < sellChance && currentSodas > 0) {
-          let batchSize = Math.max(1, Math.floor(0.7 * Math.pow(publicDemand, 1.15)));
+          let batchSize = Math.max(1, Math.floor(0.8 * Math.pow(publicDemand, 1.15)));
 
           const actualSales = Math.min(currentSodas, batchSize);
 
           currentSodas -= actualSales;
-          capitalEarnedThisTick = actualSales * sellPrices.soda;
+          capitalEarnedThisTick = actualSales * sellPricesRef.current.soda;
         }
 
         if (capitalEarnedThisTick > 0) {
@@ -175,7 +219,7 @@ export function Play({ username }) {
 
   return (
     <div className={styles.container}>
-      <TopBar gameTime={gameTime} username={username} />
+      <TopBar gameTime={gameTime.toFixed(0)} username={username} />
       <main className={styles.main}>
         <CapitalDisplay capital={capital} />
         <div className={styles.lowerWrapper}>
@@ -189,9 +233,13 @@ export function Play({ username }) {
             updateCapital={updateCapital}
             changeSodaPrice={changeSodaPrice}
           />
-          <StoreBar capital={capital} />
-          <InventoryBar upgrades={upgrades} />
-          <Leaderboard capital={capital} />
+          <StoreBar
+            capital={capital}
+            maxCapital={maxCapital}
+            upgradesOwned={upgradesOwned}
+            buyUpgrade={buyUpgrade}
+          />
+          <Leaderboard capital={capital} username={username} />
         </div>
       </main>
     </div>

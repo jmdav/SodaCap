@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import styles from "../play.module.css";
+import { SuppliesItem } from "./SuppliesItem";
 
 export function SuppliesBar({
   supplies,
@@ -14,6 +15,10 @@ export function SuppliesBar({
 
   const [isMixing, setIsMixing] = useState(false);
   const [sodaMix, setSodaMix] = useState(0);
+  const [buyAmount, setBuyAmount] = useState({
+    syrup: 5,
+    straw: 5,
+  })
   const mixProgressRef = useRef(0);
 
   useEffect(() => {
@@ -33,7 +38,7 @@ export function SuppliesBar({
           mixProgressRef.current = 0;
           setSodaMix(0);
           setIsMixing(false);
-          updateSupplies("soda", 1);
+          updateSupplies("soda", stats.mixAmount);
           return;
         }
 
@@ -64,6 +69,13 @@ export function SuppliesBar({
   }
 
   const sellSupply = (type, amount) => {
+    if ((supplies[type] - amount) >= 0) {
+      updateCapital(sellPrices[type] * amount);
+      updateSupplies(type, (amount * -1));
+    }
+  }
+
+  const changeAmount = (type, amount) => {
     if ((supplies[type] - amount) >= 0) {
       updateCapital(sellPrices[type] * amount);
       updateSupplies(type, (amount * -1));
@@ -105,49 +117,32 @@ export function SuppliesBar({
 
       </div>
 
-      <div className={styles.suppliesItem}>
-        <h3>SYRUP</h3>
-        <h4 id="price-syrup">(B: ${(buyPrices.syrup * 10).toFixed(2)} | S: ${(sellPrices.syrup * 10).toFixed(2)})</h4>
-        <br />
-        <div id="supply-syrup">SUPPLY: {supplies.syrup}</div>
+      <SuppliesItem
+        key="syrup"
+        name="syrup"
+        capital={capital}
+        buyPrices={buyPrices}
+        sellPrices={sellPrices}
+        supplies={supplies}
+        buySupply={buySupply}
+        sellSupply={sellSupply}
+        setBuyAmount={setBuyAmount}
+        amount={buyAmount.syrup}
+      />
 
-        <button
-          id="buy-syrup"
-          className={styles.btn}
-          onClick={() => buySupply("syrup", 10)}
-          disabled={buyPrices.syrup > capital}>
-          BUY 10
-        </button>
-        <button
-          id="sell-syrup"
-          className={styles.btn}
-          onClick={() => sellSupply("syrup", 10)}
-          disabled={supplies.syrup < 10}>
-          SELL 10
-        </button>
-      </div>
+      <SuppliesItem
+        key="straw"
+        name="straw"
+        capital={capital}
+        buyPrices={buyPrices}
+        sellPrices={sellPrices}
+        supplies={supplies}
+        buySupply={buySupply}
+        sellSupply={sellSupply}
+        setBuyAmount={setBuyAmount}
+        amount={buyAmount.straw}
+      />
 
-      <div className={styles.suppliesItem}>
-        <h3>STRAW</h3>
-        <h4 id="price-straw">(B: ${(buyPrices.straw * 10).toFixed(2)} | S: ${(sellPrices.straw * 10).toFixed(2)})</h4>
-        <br />
-        <div id="supply-straw">SUPPLY: {supplies.straw}</div>
-
-        <button
-          id="buy-straw"
-          className={styles.btn}
-          onClick={() => buySupply("straw", 10)}
-          disabled={buyPrices.straw > capital}>
-          BUY 10
-        </button>
-        <button
-          id="sell-straw"
-          className={styles.btn}
-          onClick={() => sellSupply("straw", 10)}
-          disabled={supplies.straw < 10}>
-          SELL 10
-        </button>
-      </div>
     </div>
   );
 }
