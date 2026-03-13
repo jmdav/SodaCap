@@ -8,10 +8,14 @@ import { BrowserRouter, NavLink, Route, Routes } from "react-router-dom";
 import { Login } from "./login/login";
 import { Play } from "./play/play";
 import { Tutorial } from "./tutorial/tutorial";
+import { AuthState } from './login/authState';
 
 export default function App() {
+
   const [init, setInit] = useState(false);
-  const [username, setUsername] = useState("James");
+  const [username, setUsername] = React.useState(localStorage.getItem('username') || '');
+  const currentAuthState = username ? AuthState.Authenticated : AuthState.Unauthenticated;
+  const [authState, setAuthState] = React.useState(currentAuthState);
 
   useEffect(() => {
     initParticlesEngine(async (engine) => {
@@ -98,7 +102,20 @@ export default function App() {
         <div className="content">
           <Header />
           <Routes>
-            <Route path="/" element={<Login startGame={startGame} />} />
+            <Route
+              path='/'
+              element={
+                <Login
+                  username={username}
+                  authState={authState}
+                  onAuthChange={(username, authState) => {
+                    setAuthState(authState);
+                    setUsername(username);
+                  }}
+                />
+              }
+              exact
+            />
             <Route path="/play" element={<Play username={username} />} />
             <Route path="/tutorial" element={<Tutorial />} />
             <Route path="*" element={<NotFound />} />
@@ -147,6 +164,11 @@ export default function App() {
             <NavLink className={styles.navLink} to="">
               Home
             </NavLink>
+            {authState === AuthState.Authenticated && (
+              <NavLink className={styles.navLink} to="play">
+                Play
+              </NavLink>
+            )}
             <NavLink className={styles.navLink} to="tutorial">
               About
             </NavLink>

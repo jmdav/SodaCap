@@ -12,6 +12,7 @@ import { upgrades } from "./upgrades.js";
 export function Play({ username }) {
   //Game variables
   const [gameTime, setGameTime] = useState(600);
+  const [timeOffset, setTimeOffset] = useState(0);
   const [capital, setCapital] = useState(50.0);
   const [maxCapital, setMaxCapital] = useState(50.0);
   const [economy, setEconomy] = useState({
@@ -51,19 +52,27 @@ export function Play({ username }) {
   }
 
   function randomInterval(min, max) {
-    return (Math.random() * (max - min)) + min;
+    return (seededRandom(min) * (max - min)) + min;
+  }
+
+  function seededRandom(seed = 1.1) {
+    seed += Math.floor((Date.now() + timeOffset) / 100);
+    let t = seed += 0x6D2B79F5;
+    t = Math.imul(t ^ t >>> 15, t | 1);
+    t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
   }
 
   const rerollPrices = React.useCallback((type) => {
     const currentEconomy = economyRef.current; // Use the ref!
 
-    if (Math.random() < currentEconomy.changeRate) {
+    if (seededRandom(1) < currentEconomy.changeRate) {
       let multiplier = randomInterval(
         1 - currentEconomy.volatility,
         1 + currentEconomy.volatility
       );
 
-      if (Math.random() < currentEconomy.changeRate) {
+      if (seededRandom(2) < currentEconomy.changeRate) {
         multiplier = randomInterval(
           currentEconomy.volatility / 2,
           2 + currentEconomy.volatility
@@ -116,6 +125,24 @@ export function Play({ username }) {
     }, {})
   );
 
+  useEffect(() => {
+    const timeCheck = async () => {
+      try {
+        const response = await fetch("https://timeapi.io/api/Time/current/zone?timeZone=UTC");
+        const data = await response.json();
+        const trueGlobalTime = new Date(data.dateTime).getTime();
+        const localTime = Date.now();
+        const offset = Math.floor((trueGlobalTime - localTime) / 10000) * 10000;
+        setTimeOffset(offset);
+        console.log(offset)
+      } catch (error) {
+        setTimeOffset(0);
+      }
+    };
+
+    timeCheck();
+  }, []);
+
   const partialSodas = React.useRef(0);
   const tickCount = React.useRef(0);
   const economyRef = React.useRef(economy);
@@ -159,9 +186,10 @@ export function Play({ username }) {
         setMaxCapital(capitalRef.current);
       }
 
-      // Only reroll prices every other tick
       if (tickCount.current % 2 === 0) {
         rerollPrices("syrup");
+      }
+      if (tickCount.current % 2 === 1) {
         rerollPrices("straw");
       }
 
@@ -189,7 +217,7 @@ export function Play({ username }) {
         const sellChance = publicDemand / 100;
         let capitalEarnedThisTick = 0;
 
-        if (Math.random() < sellChance && currentSodas > 0) {
+        if (seededRandom(3) < sellChance && currentSodas > 0) {
           let batchSize = Math.max(1, Math.floor(0.8 * Math.pow(publicDemand, 1.15)));
 
           const actualSales = Math.min(currentSodas, batchSize);
@@ -216,6 +244,20 @@ export function Play({ username }) {
 
     // Note: Make sure stats.autoMixRate is in your dependency array if it changes dynamically!
   }, [economy.demand, sellPrices.soda, stats.autoMixRate]);
+
+  // Submit score when game ends
+  const scoreSubmitted = React.useRef(false);
+  useEffect(() => {
+    if (gameTime <= 0 && !scoreSubmitted.current) {
+      scoreSubmitted.current = true;
+      fetch('/api/scores', {
+        method: 'post',
+        body: JSON.stringify({ username, score: capitalRef.current }),
+        headers: { 'Content-type': 'application/json; charset=UTF-8' },
+        credentials: 'include',
+      }).catch(() => { });
+    }
+  }, [gameTime, username]);
 
   return (
     <div className={styles.container}>
