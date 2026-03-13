@@ -6,7 +6,7 @@ export function TopBar({ username, gameTime }) {
     <div className={styles.topBar}>
       <div className={styles.usernameDisplay}>
         <h5>
-          Logged in as <span className={styles.username}>{username}</span>
+          <span className={styles.username}>{username}</span>
         </h5>
       </div>
 

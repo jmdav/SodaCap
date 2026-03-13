@@ -131,6 +131,22 @@ button {
   color: black;
 }
 
+.playerName {
+  text-align: center;
+  font-weight: bold;
+  font-size: 15pt;
+  margin: 40px;
+}
+
+.errorDisplay {
+  text-align: center;
+  font-weight: bold;
+  font-size: 12pt;
+  margin: 20px 0px;
+  color: red;
+  overflow: hidden;
+}
+
 button:hover {
   background-color: #a0a0a0;
   transform: translateY(1px);

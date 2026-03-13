@@ -1,25 +1,71 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState, useCallback } from "react";
 import Particles, { initParticlesEngine } from "@tsparticles/react";
-import { loadAll } from "@tsparticles/all";
+import { loadSlim } from "@tsparticles/slim";
 import { useLocation } from "react-router-dom";
 import styles from "./app.module.css";
-
-import { BrowserRouter, NavLink, Route, Routes } from "react-router-dom";
+import {
+  BrowserRouter,
+  NavLink,
+  Route,
+  Routes,
+  Navigate,
+} from "react-router-dom";
 import { Login } from "./login/login";
 import { Play } from "./play/play";
 import { Tutorial } from "./tutorial/tutorial";
-import { AuthState } from './login/authState';
+import { AuthState } from "./login/authState";
+
+function NotFound() {
+  return <main>404: Return to sender. Address unknown.</main>;
+}
+
+function Header({ authState }) {
+  const location = useLocation();
+  let headerClass = styles.headerMain;
+  if (location.pathname === "/play") {
+    headerClass = styles.headerPlay;
+  }
+  return (
+    <header className={headerClass}>
+      <img
+        className={styles.logo}
+        src="/sodacap.png"
+        width="400px"
+        alt="SodaCap"
+      />
+      <nav className={styles.nav}>
+        <menu className={styles.mainNav}>
+          <NavLink className={styles.navLink} to="">
+            Home
+          </NavLink>
+          {authState === AuthState.Authenticated && (
+            <NavLink className={styles.navLink} to="play">
+              Play
+            </NavLink>
+          )}
+          <NavLink className={styles.navLink} to="tutorial">
+            About
+          </NavLink>
+        </menu>
+      </nav>
+    </header>
+  );
+}
 
 export default function App() {
-
   const [init, setInit] = useState(false);
-  const [username, setUsername] = React.useState(localStorage.getItem('username') || '');
-  const currentAuthState = username ? AuthState.Authenticated : AuthState.Unauthenticated;
+  const [particlesContainer, setParticlesContainer] = useState(null);
+  const [username, setUsername] = React.useState(
+    localStorage.getItem("username") || "",
+  );
+  const currentAuthState = username
+    ? AuthState.Authenticated
+    : AuthState.Unauthenticated;
   const [authState, setAuthState] = React.useState(currentAuthState);
 
   useEffect(() => {
     initParticlesEngine(async (engine) => {
-      await loadAll(engine);
+      await loadSlim(engine);
     }).then(() => {
       setInit(true);
     });
@@ -35,10 +81,13 @@ export default function App() {
         stroke: {
           width: 4,
           color: "#000000",
-          opacity: 0.1,
+          opacity: {
+            min: 0.01,
+            max: 0.08,
+          },
         },
         number: {
-          value: 60,
+          value: 40,
           density: {
             enable: true,
             area: 900,
@@ -63,13 +112,11 @@ export default function App() {
           random: true,
         },
         move: {
-          gravity: -0.3,
           enable: true,
           speed: {
             min: 3,
-            max: 10,
+            max: 9,
           },
-          angle: 50,
           random: true,
           straight: false,
           direction: "top",
@@ -100,10 +147,10 @@ export default function App() {
       <div className="body" id="particles-js">
         {init && <Particles id="tsparticles" options={options} />}
         <div className="content">
-          <Header />
+          <Header authState={authState} />
           <Routes>
             <Route
-              path='/'
+              path="/"
               element={
                 <Login
                   username={username}
@@ -116,7 +163,16 @@ export default function App() {
               }
               exact
             />
-            <Route path="/play" element={<Play username={username} />} />
+            <Route
+              path="/play"
+              element={
+                authState === AuthState.Authenticated ? (
+                  <Play username={username} />
+                ) : (
+                  <Navigate to="/" replace />
+                )
+              }
+            />
             <Route path="/tutorial" element={<Tutorial />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
@@ -128,53 +184,4 @@ export default function App() {
       </div>
     </BrowserRouter>
   );
-
-  function NotFound() {
-    return (
-      <main className="container-fluid bg-secondary text-center">
-        404: Return to sender. Address unknown.
-      </main>
-    );
-  }
-
-  function startGame(nextUsername) {
-    const trimmedUsername = nextUsername?.trim();
-    setUsername(trimmedUsername || "Player");
-  }
-
-  function Header() {
-    const location = useLocation();
-    var headerClass;
-    if (location.pathname === "/" || location.pathname === "/tutorial") {
-      headerClass = styles.headerMain;
-    }
-    if (location.pathname === "/play") {
-      headerClass = styles.headerPlay;
-    }
-    return (
-      <header className={headerClass}>
-        <img
-          className={styles.logo}
-          src="/sodacap.png"
-          width="400px"
-          alt="SodaCap"
-        />
-        <nav className={styles.nav}>
-          <menu className={styles.mainNav}>
-            <NavLink className={styles.navLink} to="">
-              Home
-            </NavLink>
-            {authState === AuthState.Authenticated && (
-              <NavLink className={styles.navLink} to="play">
-                Play
-              </NavLink>
-            )}
-            <NavLink className={styles.navLink} to="tutorial">
-              About
-            </NavLink>
-          </menu>
-        </nav>
-      </header>
-    );
-  }
 }
