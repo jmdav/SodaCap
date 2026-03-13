@@ -11,6 +11,7 @@ const DB_FILE = path.join(__dirname, "db.json");
 
 app.use(express.json());
 app.use(cookieParser());
+app.use(express.static("public"));
 
 const verifyAuth = async (req, res, next) => {
   const user = await findUser("token", req.cookies[authCookieName]);

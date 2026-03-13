@@ -114,6 +114,7 @@ export function Play({ username }) {
     syrup: 0.5,
     straw: 0.5,
   });
+
   const [stats, setStats] = useState({
     sellRate: economy.demand / sellPrices.soda,
     mixTime: 1,
