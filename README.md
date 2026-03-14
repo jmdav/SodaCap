@@ -78,3 +78,14 @@ For this deliverable I did the following. I checked the box `[x]` and added a de
 
 - [x] **All functionality implemented or mocked out** - This was a whole mess and the learning curve was a bit tricky. I would have done it all much differently if I could start over, which is a great sign for my learning through the process.
 - [x] **Hooks** - Main game loop with useEffect, with useRef for components that need to be preserved and iterated on outside that loop. useState was of course used extensively for all the variables needed to simulate a rudimentary economy.
+
+## 🚀 Service deliverable
+
+For this deliverable I did the following. I checked the box `[x]` and added a description for things I completed.
+
+- [x] **Node.js/Express HTTP service** - Installed Express with NPM. Default port on 3000`.
+- [x] **Static middleware for frontend** - Simple endpoints in `service/index`.
+- [x] **Calls to third party endpoints** - Game calls `timeapi.io` to synchronize the game clock (for deterministic market prices across all clients)
+- [x] **Backend service endpoints** - Simple endpoints in `service/index` for accounts and leaderboard.
+- [x] **Frontend calls service endpoints** - It sure does!
+- [x] **Supports registration, login, logout, and restricted endpoint** - Users can register, blank usernames or passwords are blocked. Users can log in or out. At the endo the game, their score is updated on the global leaderboard, limited to one entry per username. Access to the game is restricted until a user is logged in.
