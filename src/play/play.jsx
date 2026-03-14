@@ -14,14 +14,30 @@ export function Play({ username }) {
   //Game variables
   const [gameTime, setGameTime] = useState(300.1);
   const [scores, setScores] = useState(null);
-  const [timeOffset, setTimeOffset] = useState(0);
+  const [timeOffset, setTimeOffset] = useState(21590000);
   const [capital, setCapital] = useState(20.0);
   const [maxCapital, setMaxCapital] = useState(50.0);
   const [economy, setEconomy] = useState({
     demand: 12,
     changeRate: 0.1,
-    volatility: 0.3,
-    sellRatio: 0.8,
+    sellRatio: 0.9,
+  });
+
+  const [itemEconomy, setItemEconomy] = useState({
+    syrup: {
+      basePrice: 0.7,
+      waves: {
+        small: { amplitude: 0.1, periodMs: 300500, phase: 0 },
+        med: { amplitude: 0.7, periodMs: 700100, phase: Math.PI / 4 },
+      },
+    },
+    straw: {
+      basePrice: 0.5,
+      waves: {
+        small: { amplitude: 0.1, periodMs: 300100, phase: 0 },
+        med: { amplitude: 0.7, periodMs: 704000, phase: Math.PI / 4 },
+      },
+    },
   });
 
   const [supplies, setSupplies] = useState({
@@ -39,7 +55,6 @@ export function Play({ username }) {
 
   const changeSodaPrice = (amount) => {
     const newPrice = Math.max(sellPrices.soda + amount, 0.001);
-    const newSellRate = economy.demand / newPrice;
 
     setSellPrices((prev) => ({
       ...prev,
@@ -48,7 +63,6 @@ export function Play({ username }) {
 
     setStats((prev) => ({
       ...prev,
-      sellRate: newSellRate,
     }));
   };
 
@@ -64,41 +78,37 @@ export function Play({ username }) {
     return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
   }
 
-  const rerollPrices = React.useCallback((type) => {
-    const currentEconomy = economyRef.current;
+  const rerollPrices = React.useCallback(
+    (type) => {
+      const currentGlobalTimeMs = Date.now() + timeOffset;
+      const currentEconomy = economyRef.current;
 
-    if (seededRandom(1) < currentEconomy.changeRate) {
-      let multiplier = randomInterval(
-        1 - currentEconomy.volatility,
-        1 + currentEconomy.volatility,
-      );
+      const itemData = itemEconomy[type];
+      if (!itemData) return;
 
-      if (seededRandom(2) < currentEconomy.changeRate) {
-        multiplier = randomInterval(
-          currentEconomy.volatility / 2,
-          2 + currentEconomy.volatility,
-        );
+      let calculatedPrice = itemData.basePrice;
+
+      for (const wave of Object.values(itemData.waves)) {
+        const progress = (currentGlobalTimeMs % wave.periodMs) / wave.periodMs;
+        const currentWaveValue = Math.sin(progress * 2 * Math.PI + wave.phase);
+
+        calculatedPrice += wave.amplitude * currentWaveValue;
       }
 
-      setBuyPrices((prevBuy) => {
-        const newBuyPrice = Math.max(
-          0.5,
-          Math.min(prevBuy[type] * multiplier, 3),
-        );
+      const finalBuyPrice = Math.max(0.05, calculatedPrice);
+      console.log(finalBuyPrice);
+      setSellPrices((prevSell) => ({
+        ...prevSell,
+        [type]: finalBuyPrice * currentEconomy.sellRatio,
+      }));
 
-        setSellPrices((prevSell) => ({
-          ...prevSell,
-          [type]:
-            newBuyPrice * (currentEconomy.sellRatio * randomInterval(0.8, 1.2)),
-        }));
-
-        return {
-          ...prevBuy,
-          [type]: newBuyPrice,
-        };
-      });
-    }
-  }, []);
+      setBuyPrices((prevBuy) => ({
+        ...prevBuy,
+        [type]: finalBuyPrice,
+      }));
+    },
+    [timeOffset, itemEconomy],
+  );
 
   const updateCapital = (amount) => {
     setCapital((prev) => prev + amount);
@@ -110,13 +120,11 @@ export function Play({ username }) {
     straw: 0.4,
   });
   const [buyPrices, setBuyPrices] = useState({
-    soda: 3.0,
-    syrup: 0.5,
-    straw: 0.5,
+    syrup: 1.5,
+    straw: 1.5,
   });
 
   const [stats, setStats] = useState({
-    sellRate: economy.demand / sellPrices.soda,
     mixTime: 1,
     mixAmount: 1,
     autoMixRate: 0,
@@ -135,15 +143,21 @@ export function Play({ username }) {
   useEffect(() => {
     const timeCheck = async () => {
       try {
+        const fetchStart = Date.now();
         const response = await fetch(
           "https://timeapi.io/api/Time/current/zone?timeZone=UTC",
         );
+        const fetchEnd = Date.now();
+        const latency = (fetchEnd - fetchStart) / 2;
         const data = await response.json();
         const trueGlobalTime = new Date(data.dateTime).getTime();
-        const localTime = Date.now();
-        const offset = Math.floor((trueGlobalTime - localTime) / 10000) * 10000;
+        const localMidpoint = fetchStart + latency;
+        const offset =
+          Math.floor((trueGlobalTime - localMidpoint) / 10000) * 10000;
         setTimeOffset(offset);
         console.log(offset);
+        rerollPrices("syrup");
+        rerollPrices("straw");
       } catch (error) {
         setTimeOffset(0);
       }
@@ -195,10 +209,10 @@ export function Play({ username }) {
           setMaxCapital(capitalRef.current);
         }
 
-        if (tickCount.current % 2 === 0) {
+        if (tickCount.current % 5 == 0) {
           rerollPrices("syrup");
         }
-        if (tickCount.current % 2 === 1) {
+        if (tickCount.current % 5 == 4) {
           rerollPrices("straw");
         }
 
