@@ -2,6 +2,7 @@
   box-sizing: border-box;
   margin: 0;
   font-family: "JetBrains Mono", monospace;
+  overflow-x: hidden;
 }
 
 #particles-js {
@@ -15,11 +16,12 @@
   margin: 0;
   display: flex;
   flex-direction: column;
+  overflow-x: hidden;
 }
 
 footer {
   height: 10vh;
-  width: 100vw;
+  width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -119,5 +121,3 @@ footer {
   transition: 0.1s ease;
   text-decoration: none;
 }
-
-

@@ -7,7 +7,7 @@ import styles from "../main.module.css";
 export function Login({ authState, username, onAuthChange }) {
   return (
     <main className={styles.main}>
-      <div>
+      <div clasName={styles.centered}>
         {authState !== AuthState.Unknown}
         {authState === AuthState.Authenticated && (
           <Authenticated

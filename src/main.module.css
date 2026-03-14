@@ -8,6 +8,12 @@
   transition: 0.15s ease;
 }
 
+.centered {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 .logo:hover {
   transform: scale(1.02);
 }

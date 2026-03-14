@@ -25,17 +25,17 @@ export function Play({ username }) {
 
   const [itemEconomy, setItemEconomy] = useState({
     syrup: {
-      basePrice: 0.7,
+      basePrice: 1,
       waves: {
-        small: { amplitude: 0.1, periodMs: 300500, phase: 0 },
-        med: { amplitude: 0.7, periodMs: 700100, phase: Math.PI / 4 },
+        small: { amplitude: 0.4, periodMs: 100003, phase: 0 },
+        med: { amplitude: 0.1, periodMs: 597613, phase: Math.PI / 4 },
       },
     },
     straw: {
       basePrice: 0.5,
       waves: {
-        small: { amplitude: 0.1, periodMs: 300100, phase: 0 },
-        med: { amplitude: 0.7, periodMs: 704000, phase: Math.PI / 4 },
+        small: { amplitude: 0.4, periodMs: 86029, phase: Math.PI / 4 },
+        med: { amplitude: 0.1, periodMs: 545063, phase: 0 },
       },
     },
   });
@@ -209,10 +209,10 @@ export function Play({ username }) {
           setMaxCapital(capitalRef.current);
         }
 
-        if (tickCount.current % 5 == 0) {
+        if (tickCount.current % 50 == 0) {
           rerollPrices("syrup");
         }
-        if (tickCount.current % 5 == 4) {
+        if (tickCount.current % 50 == 25) {
           rerollPrices("straw");
         }
 

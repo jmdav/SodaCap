@@ -127,15 +127,15 @@ export const upgrades = {
   hand1: {
     id: "hand1",
     type: "upgrade",
-    name: "Caffeine Pill",
+    name: "Caffeine Pills",
     description: "Increases manual mixing speed.",
-    flavor: "A taste of your own medicine.",
+    flavor: "A taste of your own medicine!",
     baseCost: 20.0,
-    costMultiplier: 1.2,
+    costMultiplier: 1.3,
     onPurchase: ({ setStats }) => {
       setStats((prev) => {
         const currentRate = 1 / prev.mixTime;
-        const newRate = currentRate + 0.5;
+        const newRate = currentRate + 1;
         return { ...prev, mixTime: Math.max(0.05, 1 / newRate) };
       });
     },
@@ -143,13 +143,25 @@ export const upgrades = {
   hand2: {
     id: "hand2",
     type: "upgrade",
-    name: "Bionic Arm",
+    name: "New Blender",
     description: "Produce 1 more soda per manual mix.",
-    flavor: "Only a mildly invasive installation process!",
-    baseCost: 100.0,
+    flavor: "Don't worry about kitchen space, you have plenty!",
+    baseCost: 70.0,
     costMultiplier: 1.5,
     onPurchase: ({ setStats }) => {
       setStats((prev) => ({ ...prev, mixAmount: (prev.mixAmount || 1) + 1 }));
+    },
+  },
+  hand3: {
+    id: "hand3",
+    type: "upgrade",
+    name: "Bionic Arm",
+    description: "Produce 2x more soda per manual mix.",
+    flavor: "Only a mildly invasive installation process!",
+    baseCost: 500.0,
+    costMultiplier: 2,
+    onPurchase: ({ setStats }) => {
+      setStats((prev) => ({ ...prev, mixAmount: (prev.mixAmount || 1) * 2 }));
     },
   },
 };

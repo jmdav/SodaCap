@@ -17,7 +17,7 @@ export function Authenticated(props) {
   }
 
   return (
-    <div>
+    <div className={styles.centered}>
       <div className={styles.playerName}>Logged in as {props.username}</div>
       <button variant="primary" onClick={() => navigate("/play")}>
         Play
