@@ -41,7 +41,7 @@ let { users, scores } = loadDB();
 let apiRouter = express.Router();
 app.use(`/api`, apiRouter);
 
-const port = process.argv.length > 2 ? process.argv[2] : 3000;
+const port = process.argv.length > 2 ? process.argv[2] : 7000;
 
 function updateScores(newScore) {
   console.log(newScore);

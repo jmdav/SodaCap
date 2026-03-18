@@ -83,7 +83,7 @@ For this deliverable I did the following. I checked the box `[x]` and added a de
 
 For this deliverable I did the following. I checked the box `[x]` and added a description for things I completed.
 
-- [x] **Node.js/Express HTTP service** - Installed Express with NPM. Default port on 3000`.
+- [x] **Node.js/Express HTTP service** - Installed Express with NPM. Default port on 7000`.
 - [x] **Static middleware for frontend** - Simple endpoints in `service/index`.
 - [x] **Calls to third party endpoints** - Game calls `timeapi.io` to synchronize the game clock (for deterministic market prices across all clients)
 - [x] **Backend service endpoints** - Simple endpoints in `service/index` for accounts and leaderboard.
