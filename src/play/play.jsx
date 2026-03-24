@@ -12,7 +12,7 @@ import { upgrades } from "./upgrades.js";
 
 export function Play({ username }) {
   //Game variables
-  const [gameTime, setGameTime] = useState(300.1);
+  const [gameTime, setGameTime] = useState(5.1);
   const [scores, setScores] = useState(null);
   const [timeOffset, setTimeOffset] = useState(21590000);
   const [capital, setCapital] = useState(20.0);

@@ -5,9 +5,9 @@ const bcrypt = require("bcryptjs");
 const uuid = require("uuid");
 const fs = require("fs");
 const path = require("path");
+const DB = require("./database.js");
 
 const authCookieName = "token";
-const DB_FILE = path.join(__dirname, "db.json");
 
 app.use(express.json());
 app.use(cookieParser());
@@ -22,53 +22,18 @@ const verifyAuth = async (req, res, next) => {
   }
 };
 
-function loadDB() {
-  if (fs.existsSync(DB_FILE)) {
-    try {
-      const data = JSON.parse(fs.readFileSync(DB_FILE, "utf8"));
-      return { users: data.users || [], scores: data.scores || [] };
-    } catch {}
-  }
-  return { users: [], scores: [] };
-}
-
-function saveDB() {
-  fs.writeFileSync(DB_FILE, JSON.stringify({ users, scores }, null, 2));
-}
-
-let { users, scores } = loadDB();
-
 let apiRouter = express.Router();
 app.use(`/api`, apiRouter);
 
 const port = process.argv.length > 2 ? process.argv[2] : 7000;
 
-function updateScores(newScore) {
-  console.log(newScore);
+async function updateScores(newScore) {
   const normalizedScore = {
     ...newScore,
     score: Number(newScore.score),
   };
-
-  const existingIndex = scores.findIndex(
-    (entry) => entry.username === normalizedScore.username,
-  );
-
-  console.log(existingIndex);
-
-  if (existingIndex === -1) {
-    scores.push(normalizedScore);
-  } else if (normalizedScore.score > Number(scores[existingIndex].score)) {
-    scores[existingIndex] = normalizedScore;
-  }
-
-  scores.sort((a, b) => Number(b.score) - Number(a.score));
-
-  if (scores.length > 20) {
-    scores = scores.slice(0, 20);
-  }
-
-  return scores;
+  await DB.updateScore(normalizedScore);
+  return DB.getHighScores();
 }
 
 async function createUser(username, password) {
@@ -79,15 +44,18 @@ async function createUser(username, password) {
     password: passwordHash,
     token: uuid.v4(),
   };
-  users.push(user);
 
-  return user;
+  return DB.addUser(user);
 }
 
 async function findUser(field, value) {
   if (!value) return null;
-
-  return users.find((u) => u[field] === value);
+  if (field == "username") {
+    return DB.getUser(value);
+  }
+  if (field == "token") {
+    return DB.getUserByToken(value);
+  }
 }
 
 function setAuthCookie(res, authToken) {
@@ -107,7 +75,6 @@ apiRouter.post("/auth/create", async (req, res) => {
     res.status(409).send({ msg: "Existing user" });
   } else {
     const user = await createUser(req.body.username, req.body.password);
-    saveDB();
     setAuthCookie(res, user.token);
     res.send({ username: user.username });
   }
@@ -118,7 +85,7 @@ apiRouter.post("/auth/login", async (req, res) => {
   if (user) {
     if (await bcrypt.compare(req.body.password, user.password)) {
       user.token = uuid.v4();
-      saveDB();
+      await DB.updateUser(user);
       setAuthCookie(res, user.token);
       res.send({ username: user.username });
       return;
@@ -127,21 +94,21 @@ apiRouter.post("/auth/login", async (req, res) => {
   res.status(401).send({ msg: "Invalid username or password" });
 });
 
-apiRouter.get("/scores", (_req, res) => {
+apiRouter.get("/scores", async (_req, res) => {
+  const scores = await DB.getHighScores();
   res.send(scores);
 });
 
-apiRouter.post("/scores", verifyAuth, (req, res) => {
+apiRouter.post("/scores", verifyAuth, async (req, res) => {
   const { username, score } = req.body;
-  const updated = updateScores({ username, score });
-  saveDB();
+  const updated = await updateScores({ username, score });
   res.send(updated);
 });
 
 apiRouter.delete("/auth/logout", async (req, res) => {
   const user = await findUser("token", req.cookies[authCookieName]);
   if (user) {
-    delete user.token;
+    await DB.updateUserRemoveAuth(user);
   }
   res.clearCookie(authCookieName);
   res.status(204).end();
