@@ -13,7 +13,7 @@ export function SuppliesItem({
   amount,
 }) {
 
-  const multipliers = [5, 10, 50, 100, 1000];
+  const multipliers = [5, 10, 50, 100, 1000, 5000];
 
   const updateMultiplier = () => {
 

@@ -1,5 +1,6 @@
 import React from "react";
 import styles from "./play.module.css";
+import { animatedNumber } from './AnimatedNumber';
 
 export function CapitalDisplay({ capital }) {
   return (

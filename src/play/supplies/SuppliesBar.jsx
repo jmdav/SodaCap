@@ -90,15 +90,15 @@ export function SuppliesBar({
         <button
           id="raise-soda-price"
           className={styles.btn}
-          onClick={() => changeSodaPrice(0.25)}
+          onClick={() => changeSodaPrice(0.50)}
         >
           ↑
         </button>
         <button
           id="lower-soda-price"
           className={styles.btn}
-          disabled={sellPrices.soda <= 0.25}
-          onClick={() => changeSodaPrice(-0.25)}
+          disabled={sellPrices.soda <= 0.50}
+          onClick={() => changeSodaPrice(-0.50)}
         >
           ↓
         </button>

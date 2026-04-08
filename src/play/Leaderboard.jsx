@@ -13,7 +13,7 @@ export function Leaderboard({ username, capital, scores: externalScores }) {
       try {
         const res = await fetch("/api/scores");
         if (res.ok) setScores(await res.json());
-      } catch {}
+      } catch { }
     }
     fetchScores();
   }, [externalScores]);

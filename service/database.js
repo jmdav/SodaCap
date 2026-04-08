@@ -44,18 +44,22 @@ async function updateUserRemoveAuth(user) {
 }
 
 async function updateScore(score) {
-  await scoreCollection.updateOne(
-    { username: score.username },
-    { $set: score },
-    { upsert: true },
-  );
+  const previous = await scoreCollection.findOne({ username: score.username });
+  console.log("Game finished by " + score.username + " with score " + score.score);
+  if (!previous || score.score > previous.score) {
+    await scoreCollection.updateOne(
+      { username: score.username },
+      { $set: score },
+      { upsert: true },
+    );
+  }
   return getHighScores();
 }
 
 async function getHighScores() {
   const options = {
     sort: { score: -1 },
-    limit: 20,
+    limit: 50,
   };
   const cursor = scoreCollection.find({}, options);
   const scores = await cursor.toArray();

@@ -1,2 +1,2 @@
-konsole -e npm run dev &
-konsole -e node service/index.js
+npm run dev &
+node service/index.js

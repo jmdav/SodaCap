@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import styles from "./play.module.css";
 
 import { TopBar } from "./TopBar";
@@ -6,13 +6,14 @@ import { CapitalDisplay } from "./CapitalDisplay";
 import { SuppliesBar } from "./supplies/SuppliesBar";
 import { StoreBar } from "./store/StoreBar";
 import { GameOver } from "./GameOver";
-import { InventoryBar } from "./store/InventoryBar";
 import { Leaderboard } from "./Leaderboard";
 import { upgrades } from "./upgrades.js";
 
 export function Play({ username }) {
+  const ws = useRef(null);
   //Game variables
-  const [gameTime, setGameTime] = useState(5.1);
+  const [gameTime, setGameTime] = useState(300.1);
+  const [liveLeaderboard, setLiveLeaderboard] = useState([]);
   const [scores, setScores] = useState(null);
   const [timeOffset, setTimeOffset] = useState(21590000);
   const [capital, setCapital] = useState(20.0);
@@ -139,8 +140,9 @@ export function Play({ username }) {
     }, {}),
   );
 
-  //When the game first runs, check with timeapi.io to get the global time and find the local offset from that
+  // 3rd party time sync
   useEffect(() => {
+
     const timeCheck = async () => {
       try {
         const fetchStart = Date.now();
@@ -199,6 +201,42 @@ export function Play({ username }) {
     }
   };
 
+  // Websocket handler
+  useEffect(() => {
+
+    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    const wsUrl = `${protocol}//localhost:7000`;
+
+    ws.current = new WebSocket(wsUrl);
+
+    ws.current.onopen = () => {
+      console.log("Websocket open");
+      ws.current.send(JSON.stringify({ username, score: capital }));
+    };
+
+    ws.current.onmessage = (event) => {
+      try {
+        const newLeaderboard = JSON.parse(event.data);
+
+        setLiveLeaderboard(Object.entries(newLeaderboard)
+          .sort((a, b) => b[1] - a[1])
+          .map(([username, score]) => ({ username, score })));
+      }
+      catch (error) {
+        console.error(error);
+      }
+    }
+
+    return () => {
+      if (ws.current) {
+        ws.current.close();
+      }
+    };
+
+  }, [username]);
+
+
+  // Game loop handler
   useEffect(() => {
     const gameLoop = setInterval(() => {
       if (gameTime >= 0.1) {
@@ -239,15 +277,18 @@ export function Play({ username }) {
             }
           }
 
+          const priceSensitivity = 1.8;
+          const adjustedPrice = Math.pow(sellPricesRef.current.soda, priceSensitivity);
+
           const publicDemand =
-            economyRef.current.demand / sellPricesRef.current.soda;
-          const sellChance = publicDemand / 100;
+            economyRef.current.demand / adjustedPrice;
+          const sellChance = publicDemand / 40;
           let capitalEarnedThisTick = 0;
 
           if (seededRandom(3) < sellChance && currentSodas > 0) {
             let batchSize = Math.max(
               1,
-              Math.floor(0.8 * Math.pow(publicDemand, 1.15)),
+              Math.floor(0.16 * Math.pow(publicDemand, 1.15)),
             );
 
             const actualSales = Math.min(currentSodas, batchSize);
@@ -267,6 +308,12 @@ export function Play({ username }) {
           };
         });
       }
+      if (ws.current && ws.current.readyState === WebSocket.OPEN) {
+        ws.current.send(JSON.stringify({
+          username: username,
+          score: capital
+        }));
+      }
     }, 100);
 
     return () => clearInterval(gameLoop);
@@ -274,6 +321,8 @@ export function Play({ username }) {
 
   const scoreSubmitted = React.useRef(false);
 
+
+  // Game end handler
   useEffect(() => {
     if (gameTime <= 0.1 && !scoreSubmitted.current) {
       scoreSubmitted.current = true;
@@ -320,6 +369,11 @@ export function Play({ username }) {
                 maxCapital={maxCapital}
                 upgradesOwned={upgradesOwned}
                 buyUpgrade={buyUpgrade}
+              />
+              <Leaderboard
+                capital={capital}
+                username={username}
+                scores={liveLeaderboard}
               />
             </>
           )}

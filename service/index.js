@@ -6,6 +6,7 @@ const uuid = require("uuid");
 const fs = require("fs");
 const path = require("path");
 const DB = require("./database.js");
+const { peerProxy } = require('./peerProxy.js');
 
 const authCookieName = "token";
 
@@ -122,6 +123,11 @@ app.use((_req, res) => {
   res.sendFile("index.html", { root: "public" });
 });
 
-app.listen(port, () => {
-  console.log(`Listening on port ${port}`);
+const httpService = app.listen(port, () => {
+  app.listen(port, () => {
+    console.log(`Listening on port ${port}`);
+  });
 });
+
+peerProxy(httpService);
+
