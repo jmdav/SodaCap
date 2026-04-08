@@ -19,7 +19,7 @@ export function Play({ username }) {
   const [capital, setCapital] = useState(20.0);
   const [maxCapital, setMaxCapital] = useState(50.0);
   const [economy, setEconomy] = useState({
-    demand: 12,
+    demand: 14,
     changeRate: 0.1,
     sellRatio: 0.9,
   });
@@ -43,8 +43,8 @@ export function Play({ username }) {
 
   const [supplies, setSupplies] = useState({
     soda: 0,
-    syrup: 10,
-    straw: 10,
+    syrup: 20,
+    straw: 20,
   });
 
   const updateSupplies = (type, amount) => {
@@ -131,6 +131,8 @@ export function Play({ username }) {
     autoMixRate: 0,
     syrupMakeRate: 0,
     strawMakeRate: 0,
+    supplyEfficiency: 1,
+    synergyBonus: 0,
   });
 
   const [upgradesOwned, setUpgradesOwned] = useState(() =>
@@ -197,6 +199,8 @@ export function Play({ username }) {
       upgradeData.onPurchase({
         setEconomy,
         setStats,
+        setSellPrices,
+        setBuyPrices,
       });
     }
   };
@@ -258,37 +262,40 @@ export function Play({ username }) {
           let currentSodas = prev.soda;
           let currentSyrup = prev.syrup;
           let currentStraw = prev.straw;
-
-          partialSodas.current += stats.autoMixRate / 10;
+          currentSyrup += stats.syrupMakeRate / 10;
+          currentStraw += stats.strawMakeRate / 10;
+          const synergyMultiplier = 1 + stats.synergyBonus;
+          partialSodas.current += (stats.autoMixRate * synergyMultiplier) / 10;
           const finishedSodas = Math.floor(partialSodas.current);
           partialSodas.current -= finishedSodas;
 
           if (finishedSodas > 0) {
+            const suppliesPerSoda = stats.supplyEfficiency;
             const actualSodas = Math.min(
               finishedSodas,
-              currentSyrup,
-              currentStraw,
+              Math.floor(currentSyrup / suppliesPerSoda),
+              Math.floor(currentStraw / suppliesPerSoda),
             );
 
             if (actualSodas > 0) {
               currentSodas += actualSodas;
-              currentSyrup -= actualSodas;
-              currentStraw -= actualSodas;
+              currentSyrup -= actualSodas * suppliesPerSoda;
+              currentStraw -= actualSodas * suppliesPerSoda;
             }
           }
 
-          const priceSensitivity = 1.8;
+          const priceSensitivity = 1.5;
           const adjustedPrice = Math.pow(sellPricesRef.current.soda, priceSensitivity);
 
           const publicDemand =
             economyRef.current.demand / adjustedPrice;
-          const sellChance = publicDemand / 40;
+          const sellChance = publicDemand / 20;
           let capitalEarnedThisTick = 0;
 
           if (seededRandom(3) < sellChance && currentSodas > 0) {
             let batchSize = Math.max(
               1,
-              Math.floor(0.16 * Math.pow(publicDemand, 1.15)),
+              Math.floor(0.5 * Math.pow(publicDemand, 1.15)),
             );
 
             const actualSales = Math.min(currentSodas, batchSize);
