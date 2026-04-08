@@ -132,7 +132,6 @@ export function Play({ username }) {
     syrupMakeRate: 0,
     strawMakeRate: 0,
     supplyEfficiency: 1,
-    synergyBonus: 0,
   });
 
   const [upgradesOwned, setUpgradesOwned] = useState(() =>
@@ -264,8 +263,7 @@ export function Play({ username }) {
           let currentStraw = prev.straw;
           currentSyrup += stats.syrupMakeRate / 10;
           currentStraw += stats.strawMakeRate / 10;
-          const synergyMultiplier = 1 + stats.synergyBonus;
-          partialSodas.current += (stats.autoMixRate * synergyMultiplier) / 10;
+          partialSodas.current += (stats.autoMixRate) / 10;
           const finishedSodas = Math.floor(partialSodas.current);
           partialSodas.current -= finishedSodas;
 
