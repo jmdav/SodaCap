@@ -107,3 +107,13 @@ For this deliverable I did the following. I checked the box `[x]` and added a de
 
 - [x] **Stores data in MongoDB** - Scores stored in MongoDB from `service/database.js`.
 - [x] **Stores credentials in MongoDB** - Auth stored in MongoDB from `service/database.js`.
+
+## 🚀 WebSocket deliverable
+
+For this deliverable I did the following. I checked the box `[x]` and added a description for things I completed.
+
+- [x] **Backend listens for WebSocket connection** - Backend webSocket management executed in `service/peerProxy.js`.
+- [x] **Frontend makes WebSocket connection** - Backend webSocket management executed in `src/play.jsx`.
+- [x] **Data sent over WebSocket connection** - All clients send scores every tick to the server, which sends back a unified leaderboard.
+- [x] **WebSocket data displayed** - Live-updating leaderboard is displayed during gameplay, with an all-time leaderboard at the game's end.
+- [x] **Application is fully functional** - Email jmdav.uni@gmail.com with any balance suggestions!
