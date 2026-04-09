@@ -207,8 +207,11 @@ export function Play({ username }) {
   // Websocket handler
   useEffect(() => {
 
-    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    const wsUrl = `${protocol}//localhost:7000`;
+    const wsProtocol = window.location.protocol === "https:" ? "wss" : "ws";
+    const wsHost = import.meta.env.DEV
+      ? `${window.location.hostname}:7000`
+      : window.location.host;
+    const wsUrl = `${wsProtocol}://${wsHost}/ws`;
 
     ws.current = new WebSocket(wsUrl);
 
